@@ -68,7 +68,7 @@ export default function SortBar() {
           {TAGS.map((t, i) => (
             <button
               key={i}
-              className="rounded-xl bg-white/10 border border-white/15 px-2 py-2 text-sm text-white hover:bg-white/15 shadow-sm"
+              className="rounded-xl bg-white/10 border cursor-pointer border-white/15 px-2 py-2 text-sm text-white hover:bg-white/15 shadow-sm"
             >
               {t}
             </button>

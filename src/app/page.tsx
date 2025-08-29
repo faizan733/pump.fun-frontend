@@ -24,7 +24,7 @@ const coins = Array.from({ length: 13 }, (_, i) => ({
 
 export default function PumpBoardPage() {
   return (
-    <div className="mx-auto max-w-[1200px] px-4 pb-6 space-y-8">
+    <div className="mx-auto max-w-[1370px] px-4 pb-6 space-y-8">
       <div className="top-20 z-40">
         <CoinSearch />
       </div>
