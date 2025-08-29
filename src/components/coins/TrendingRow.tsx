@@ -1,6 +1,42 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
+import Image from "next/image";
+
+const coins = [
+  {
+    id: "coin1",
+    name: "Pill Money Podz",
+    symbol: "PMP",
+    image: "/coins/coin1.jpg",
+    mcap: "$475.7k",
+    replies: 98,
+  },
+  {
+    id: "coin2",
+    name: "Pill Money Podz",
+    symbol: "PMP",
+    image: "/coins/coin2.jpg",
+    mcap: "$1.2M",
+    replies: 67,
+  },
+  {
+    id: "coin3",
+    name: "Pill Money Podz",
+    symbol: "PMP",
+    image: "/coins/coin3.jpg",
+    mcap: "$890k",
+    replies: 120,
+  },
+  {
+    id: "coin4",
+    name: "Pill Money Podz",
+    symbol: "PMP",
+    image: "/coins/coin4.jpg",
+    mcap: "$2.1M",
+    replies: 45,
+  },
+];
 
 const items = Array.from({ length: 6 });
 
@@ -41,40 +77,52 @@ export default function TrendingRow() {
         className="overflow-x-auto pr-2 [scrollbar-width:none] [-ms-overflow-style:none]"
       >
         <div className="min-w-max flex gap-6">
-          {items.map((_, i) => (
-            <div key={i} className="shrink-0">
-              {/* Card */}
-              <div className="group inline-flex items-start gap-3 rounded-2xl border border-black bg-[#1c1c1e] p-3 transition-colors hover:border-black">
-                {/* Image */}
-                <div className="h-24 w-24 shrink-0 rounded-lg bg-white/10 ring-1 ring-white/10" />
-
-                {/* Info */}
-                <div className="flex flex-col justify-center">
-                  <div className="text-[15px] font-semibold leading-5">
-                    Pill Money Podz
+          {items.map((_, i) => {
+            const coin = coins[i % coins.length]; // cycle through 4 coins
+            return (
+              <div key={i} className="shrink-0">
+                {/* Card */}
+                <div className="group inline-flex items-start gap-3 rounded-2xl border border-black bg-[#1c1c1e] p-3 transition-colors hover:border-black">
+                  {/* Image */}
+                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10">
+                    <Image
+                      src={coin.image}
+                      alt={coin.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
 
-                  <div className="mt-1">
-                    <span className="inline-flex items-center rounded-sm bg-emerald-200 px-2 py-0.5 text-[11px] font-medium text-emerald-500">
-                      PMP
-                    </span>
-                  </div>
+                  {/* Info */}
+                  <div className="flex flex-col justify-center">
+                    <div className="text-[15px] font-semibold leading-5">
+                      {coin.name}
+                    </div>
 
-                  <div className="mt-1.5 text-[13px] text-white/65">
-                    <span className="opacity-80">Market Cap :</span>{" "}
-                    <span className="font-semibold text-emerald-400">
-                      $475.7k
-                    </span>
-                  </div>
+                    <div className="mt-1">
+                      <span className="inline-flex items-center rounded-sm bg-emerald-200 px-2 py-0.5 text-[11px] font-medium text-emerald-500">
+                        {coin.symbol}
+                      </span>
+                    </div>
 
-                  <div className="text-[13px] text-white/65">
-                    <span className="opacity-80">Replies :</span>{" "}
-                    <span className="font-semibold text-white">98</span>
+                    <div className="mt-1.5 text-[13px] text-white/65">
+                      <span className="opacity-80">Market Cap :</span>{" "}
+                      <span className="font-semibold text-emerald-400">
+                        {coin.mcap}
+                      </span>
+                    </div>
+
+                    <div className="text-[13px] text-white/65">
+                      <span className="opacity-80">Replies :</span>{" "}
+                      <span className="font-semibold text-white">
+                        {coin.replies}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
