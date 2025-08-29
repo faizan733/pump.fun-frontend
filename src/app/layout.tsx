@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import TopBar from "@/components/layout/TopBar";
 import Sidebar from "@/components/layout/Sidebar";
+import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
   title: "Pump Board",
@@ -23,7 +24,9 @@ export default function RootLayout({
         <div className="min-h-screen">
           <TopBar />
           {/* match TopBar height; also reserve rail space only on md+ */}
-          <main className="pt-16 md:pl-[80px]">{children}</main>
+          <main className="md:pl-[80px]">{children}</main>
+
+          <Footer />
         </div>
       </body>
     </html>

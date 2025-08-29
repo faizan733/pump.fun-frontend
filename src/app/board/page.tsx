@@ -11,7 +11,7 @@ export default function PumpBoardPage() {
     // Only bottom padding for spacing, no extra top padding
     <div className="mx-auto max-w-[1200px] px-4 pb-6 space-y-8">
       {/* Search directly under TopBar */}
-      <div className="sticky top-0 z-40 bg-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
+      <div className="sticky top-20 z-40 bg-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
         <CoinSearch />
       </div>
 
