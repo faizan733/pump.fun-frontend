@@ -18,16 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white">
-        {/* Floating sidebar is fixed; we just reserve a tiny rail space on md+ */}
-        <Sidebar />
-
-        <div className="min-h-screen">
-          <TopBar />
-          {/* match TopBar height; also reserve rail space only on md+ */}
-          <main className="md:pl-[80px]">{children}</main>
-
-          <Footer />
+        <TopBar />
+        <div className="pt-[40px] md:flex md:gap-4 min-h-screen">
+          <Sidebar />
+          <main className="flex-1">{children}</main>
         </div>
+        <Footer />
       </body>
     </html>
   );

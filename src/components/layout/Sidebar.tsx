@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -25,145 +25,145 @@ const NAV = [
 ];
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Tune these to your design
-  const TOPBAR_H = 80; // TopBar h-20 => 80px. If h-16, set 64.
-  const OFFSET_TOP = TOPBAR_H + 16; // space below header
-  const OFFSET_LEFT = 16; // gap from left edge
-  const RAIL_W = 64; // compact pill width
-  const PANEL_W = 280; // expanded overlay width
+  // layout knobs
+  const TOPBAR_H = 80; // TopBar h-20
+  const GAP_TOP = 8; // small gap under TopBar
+  const LEFT_MARGIN = 16; // left margin
+  const RAIL_W = 80; // collapsed width
+  const PANEL_W = 320; // expanded width
 
-  // --- COMPACT PILL (auto height) ---
+  const [open, setOpen] = useState(false);
+  const width = open ? PANEL_W : RAIL_W;
+
+  useEffect(() => {
+    document.documentElement.style.setProperty("--sidebar-w", `${width}px`);
+  }, [width]);
+
+  const isActive = useCallback(
+    (href: string) =>
+      href === "/" ? pathname === "/" : pathname?.startsWith(href),
+    [pathname]
+  );
+
+  // rounded-full ONLY when collapsed; softer (2xl) when expanded
+  const panelRadius = open ? "rounded-2xl" : "rounded-full";
+
   return (
-    <>
+    <aside
+      className="hidden md:block sticky self-start mb-4"
+      style={{
+        top: TOPBAR_H + GAP_TOP,
+        marginLeft: LEFT_MARGIN,
+        width,
+        transition: "width 220ms cubic-bezier(.2,.8,.2,1)",
+      }}
+    >
       <div
-        className="hidden md:flex fixed z-40"
-        style={{ top: OFFSET_TOP, left: OFFSET_LEFT, width: RAIL_W }}
-        aria-label="Primary navigation"
+        className={[
+          "bg-[#0c1116] border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
+          "px-3 py-3 overflow-hidden",
+          "transition-all duration-200", // smooth radius change
+          panelRadius,
+        ].join(" ")}
       >
-        <div className="w-full rounded-3xl bg-[#0c1116] border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] px-2 py-2">
-          {/* Top toggle */}
-          <div className="flex items-center justify-center mb-2">
-            <button
-              type="button"
-              onClick={() => setOpen(true)}
-              aria-label="Expand sidebar"
-              className="h-8 w-8 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
-            >
-              <ChevronRight className="h-4 w-4 text-white/80" />
-            </button>
+        {/* header / toggle */}
+        <div
+          className={`flex items-center mb-2 ${
+            open ? "justify-between" : "justify-center"
+          }`}
+        >
+          <div className={open ? "flex" : "hidden"}>
+            <div className="h-9 rounded-md bg-white text-slate-900 font-semibold px-3 flex items-center">
+              Logo
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
+            className="h-7 w-7 my-2 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
+          >
+            {open ? (
+              <ChevronLeft className="h-4 w-4 text-white/80" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-white/80" />
+            )}
+          </button>
+        </div>
 
-          {/* Icons stack */}
-          <nav className="flex flex-col items-center gap-3">
-            {NAV.map(({ label, href, icon: Icon }) => {
-              const active =
-                href === "/" ? pathname === "/" : pathname?.startsWith(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex flex-col items-center gap-1"
-                  title={label}
+        {/* nav (no inner scrollbar) */}
+        <nav
+          className={
+            open ? "space-y-1 px-1" : "flex flex-col items-center gap-3"
+          }
+        >
+          {NAV.map(({ label, href, icon: Icon }) => {
+            const active = isActive(href);
+
+            return open ? (
+              <Link
+                key={href}
+                href={href}
+                className={[
+                  "flex items-center gap-3 rounded-xl px-4 py-3",
+                  active
+                    ? "bg-emerald-500 text-black"
+                    : "hover:bg-white/5 text-white/85",
+                ].join(" ")}
+              >
+                <div className="h-10 w-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <span className={active ? "font-semibold" : ""}>{label}</span>
+              </Link>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                title={label}
+                className="flex flex-col items-center gap-1"
+              >
+                <div
+                  className={[
+                    "h-12 w-12 rounded-full border flex items-center justify-center",
+                    active
+                      ? "bg-emerald-500 text-black border-emerald-400"
+                      : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
+                  ].join(" ")}
                 >
-                  <div
-                    className={[
-                      "h-10 w-10 rounded-full border flex items-center justify-center",
-                      active
-                        ? "bg-emerald-500 text-black border-emerald-400"
-                        : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                    ].join(" ")}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-[10px] text-white/70">{label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+                  <Icon className="h-6 w-6" />
+                </div>
+                <span className="text-[11px] text-white/70">{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
 
-          {/* Bottom CTA */}
-          <div className="mt-3 flex items-center justify-center">
+        {/* footer CTA */}
+        <div className="pt-2 mx-2">
+          {open ? (
             <button
-              aria-label="Create Coin"
-              className="h-10 w-10 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center justify-center shadow"
               type="button"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 shadow"
             >
               <Plus className="h-5 w-5" />
+              Create Coin
             </button>
-          </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              <button
+                aria-label="Create Coin"
+                className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center justify-center shadow"
+                type="button"
+              >
+                <Plus className="h-6 w-6" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* --- EXPANDED OVERLAY PANEL (auto height, overlays content) --- */}
-      {open && (
-        <div
-          className="hidden md:block fixed z-50"
-          style={{
-            top: OFFSET_TOP,
-            left: OFFSET_LEFT + RAIL_W + 12, // pill + gap
-            width: PANEL_W,
-          }}
-        >
-          <div className="rounded-3xl bg-[#0c1116] border border-white/5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
-            {/* Header row */}
-            <div className="p-3 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Collapse sidebar"
-                className="h-8 w-8 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
-              >
-                <ChevronLeft className="h-4 w-4 text-white/80" />
-              </button>
-              <div className="h-8 rounded-md bg-white text-slate-900 font-semibold px-3 flex items-center">
-                Logo
-              </div>
-            </div>
-
-            {/* Nav list */}
-            <nav className="px-3 pb-3 space-y-1">
-              {NAV.map(({ label, href, icon: Icon }) => {
-                const active =
-                  href === "/" ? pathname === "/" : pathname?.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setOpen(false)}
-                    className={[
-                      "flex items-center gap-3 rounded-xl px-3 py-2",
-                      active
-                        ? "bg-emerald-500 text-black"
-                        : "hover:bg-white/5 text-white/85",
-                    ].join(" ")}
-                  >
-                    <div className="h-9 w-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <span className={active ? "font-semibold" : ""}>
-                      {label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Bottom CTA full-width */}
-            <div className="px-3 pb-3">
-              <button
-                type="button"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-2 shadow"
-              >
-                <Plus className="h-4 w-4" />
-                Create Coin
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </aside>
   );
 }

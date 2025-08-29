@@ -11,8 +11,8 @@ export default function TopBar() {
       <div className="w-full h-20 px-5 flex items-center gap-4">
         {/* Logo */}
         <div className="text-xl font-semibold flex items-center gap-2">
-          <span className="inline-block h-8 w-8 rounded-full bg-white/10" />
-          <span>Logo</span>
+          <img src="/logos/ordi-logo.svg" alt="ORDI Logo" className="h-8 w-8" />
+          <span className="text-white">Logo</span>
         </div>
 
         {/* ticker badges */}
