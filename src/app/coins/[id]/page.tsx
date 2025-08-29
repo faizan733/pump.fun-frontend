@@ -1,3 +1,4 @@
+// app/coins/[id]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -8,18 +9,30 @@ import TradePanel from "@/components/coins/detail/trade/TradePanel";
 import PositionCard from "@/components/coins/detail/PositionCard";
 import ChatCard from "@/components/coins/detail/ChatCard";
 import BondingCurveCard from "@/components/coins/detail/BondingCurveCard";
+import { getCoinById } from "@/lib/coins";
 
 export default function CoinDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const base = getCoinById(String(id)); // 👈 grab shared coin (has image)
 
-  // TEMP mock; replace with fetch by `id`
-  const coin = {
+  // Fallback if not found (avoid crash)
+  const coin = base ?? {
     id: String(id),
-    name: "Pill Money Podz",
-    symbol: "PMP",
-    logoUrl: "/coins/misa.jpg",
+    name: "Unknown Coin",
+    symbol: "UNK",
+    image: "/coins/coin1.jpg",
+    mcap: "$0",
+    replies: 0,
+  };
+
+  // Compose the object expected by your detail components
+  const coinDetail = {
+    id: coin.id,
+    name: coin.name,
+    symbol: coin.symbol,
+    logoUrl: coin.image, // 👈 pass the same image
     creator: "9HFZ5B…7K2X",
-    launchedAt: Date.now() - 18 * 60 * 60 * 1000, // 18h ago
+    launchedAt: Date.now() - 18 * 60 * 60 * 1000,
     bondedPct: 0,
     marketCap: 5300,
     marketCapDelta: -501,
@@ -30,13 +43,12 @@ export default function CoinDetailPage() {
   return (
     <div className="px-4 py-6">
       <BackLink className="mb-4" />
-      <CoinHeaderCard coin={coin} />
+      <CoinHeaderCard coin={coinDetail} />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <MarketCard coin={coin} />
-
+        <MarketCard coin={coinDetail} />
         <div className="space-y-6">
-          <TradePanel coin={coin} />
+          <TradePanel coin={coinDetail} />
           <PositionCard />
           <ChatCard />
           <BondingCurveCard raisedUSD={0} targetUSD={0} progress={0} />

@@ -144,22 +144,22 @@ export default function Sidebar() {
         {/* footer CTA */}
         <div className="pt-2 mx-2">
           {open ? (
-            <button
-              type="button"
+            <Link
+              href="/create"
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 shadow"
             >
               <Plus className="h-5 w-5" />
               Create Coin
-            </button>
+            </Link>
           ) : (
             <div className="flex items-center justify-center">
-              <button
+              <Link
+                href="/create"
                 aria-label="Create Coin"
                 className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center justify-center shadow"
-                type="button"
               >
                 <Plus className="h-6 w-6" />
-              </button>
+              </Link>
             </div>
           )}
         </div>
