@@ -1,19 +1,20 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
+  ChevronLeft,
+  ChevronRight,
   Home,
   Layers,
-  MessageSquare,
-  User,
   LifeBuoy,
+  MessageSquare,
   MoreHorizontal,
   Plus,
-  ChevronRight,
-  ChevronLeft,
+  User,
 } from "lucide-react";
+import Image from "next/image"; // 👈 keep this at the top only
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 const NAV = [
   { label: "Home", href: "/", icon: Home },
@@ -47,24 +48,23 @@ export default function Sidebar() {
     [pathname]
   );
 
-  // rounded-full ONLY when collapsed; softer (2xl) when expanded
-  const panelRadius = open ? "rounded-2xl" : "rounded-full";
+  // keep consistent radius
+  const panelRadius = "rounded-2xl";
 
   return (
     <aside
-      className="hidden md:block sticky self-start mb-4"
+      className="hidden md:block sticky self-start mb-4 transition-[width] duration-300 ease-in-out"
       style={{
         top: TOPBAR_H + GAP_TOP,
         marginLeft: LEFT_MARGIN,
         width,
-        transition: "width 220ms cubic-bezier(.2,.8,.2,1)",
       }}
     >
       <div
         className={[
           "bg-[#0c1116] border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
           "px-3 py-3 overflow-hidden",
-          "transition-all duration-200", // smooth radius change
+          "transition-[width] duration-300 ease-in-out",
           panelRadius,
         ].join(" ")}
       >
@@ -75,8 +75,15 @@ export default function Sidebar() {
           }`}
         >
           <div className={open ? "flex" : "hidden"}>
-            <div className="h-9 rounded-md bg-white text-slate-900 font-semibold px-3 flex items-center">
-              Logo
+            <div className="h-9  px-3 flex items-center gap-2">
+              <Image
+                src="/logos/ordi-logo.svg"
+                alt="Logo"
+                width={20}
+                height={20}
+                className="h-7 w-7"
+              />
+              <span className="text-white font-semibold">ORDI</span>
             </div>
           </div>
           <button
@@ -93,7 +100,7 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* nav (no inner scrollbar) */}
+        {/* nav */}
         <nav
           className={
             open ? "space-y-1 px-1" : "flex flex-col items-center gap-3"
