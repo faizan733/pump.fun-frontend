@@ -4,7 +4,14 @@ import ProgressBar from "../ProgressBar";
 import ChartControls from "./ChartControls";
 import MarketChart from "./MarketChart";
 
-export default function MarketCard({ coin }: { coin: any }) {
+interface CoinData {
+  marketCap: number;
+  ath: number;
+  marketCapDelta: number;
+  marketCapDeltaPct: number;
+}
+
+export default function MarketCard({ coin }: { coin: CoinData }) {
   const athPct = (coin.marketCap / coin.ath) * 100;
 
   return (

@@ -48,7 +48,7 @@ export default function CoinDetailPage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
         <MarketCard coin={coinDetail} />
         <div className="space-y-6">
-          <TradePanel coin={coinDetail} />
+          <TradePanel />
           <PositionCard />
           <ChatCard />
           <BondingCurveCard raisedUSD={0} targetUSD={0} progress={0} />

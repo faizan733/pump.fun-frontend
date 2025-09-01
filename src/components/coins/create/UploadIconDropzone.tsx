@@ -10,7 +10,7 @@ import { RefObject } from "react";
 type Props = {
   loggedIn: boolean;
   iconUrl: string | null | undefined;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
   onPick: () => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -50,7 +50,7 @@ export default function UploadIconDropzone({
               <p className="text-sm">Select video or image to upload</p>
               <Button
                 type="button"
-                variant="secondary"
+                variant="ghost"
                 disabled={!loggedIn}
                 onClick={onPick}
                 className="gap-2"

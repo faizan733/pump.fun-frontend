@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Coins, LogIn, Sun, Moon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function TopBar() {
   const [dark, setDark] = useState(true);
@@ -15,9 +16,11 @@ export default function TopBar() {
           href="/"
           className="text-xl md:text-xl font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity"
         >
-          <img
+          <Image
             src="/logos/ordi-logo.svg"
             alt="ORDI Logo"
+            width={32}
+            height={32}
             className="h-7 w-7 md:h-8 md:w-8"
           />
           <span className="text-white">ORDI</span>
