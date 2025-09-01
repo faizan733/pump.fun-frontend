@@ -16,7 +16,7 @@ import clsx from "clsx";
 type Props = {
   loggedIn: boolean;
   bannerUrl?: string | null;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLInputElement | null>;
   onPick: () => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -73,7 +73,7 @@ export default function ResolutionCard({
                     <ImageIcon className="h-6 w-6" />
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="ghost"
                       disabled={!loggedIn}
                       onClick={onPick}
                       className="gap-2"

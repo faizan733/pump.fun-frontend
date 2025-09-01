@@ -104,9 +104,8 @@ export default function CreateCoin() {
 
           <Button
             type="submit"
-            size="lg"
             disabled={!canSubmit}
-            className="w-full"
+            className="w-full py-3"
           >
             {LOGGED_IN ? "Create coin" : "Login in to create coin"}
           </Button>

@@ -1,6 +1,6 @@
 "use client";
 export default function ChartControls() {
-  const Btn = ({ children }: any) => (
+  const Btn = ({ children }: { children: React.ReactNode }) => (
     <button className="rounded-lg border border-neutral-800 bg-neutral-900/50 px-2.5 py-1 text-xs text-neutral-300 hover:bg-neutral-800">
       {children}
     </button>

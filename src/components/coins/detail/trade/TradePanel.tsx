@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import AmountInput from "./AmountInput";
 
-export default function TradePanel({ coin }: { coin: any }) {
-  const Chip = ({ children }: any) => (
+export default function TradePanel() {
+  const Chip = ({ children }: { children: React.ReactNode }) => (
     <button className="rounded-lg border border-neutral-800 px-2 py-1 text-xs hover:bg-neutral-800">
       {children}
     </button>
   );
-  const Tab = ({ active, children }: any) => (
+  const Tab = ({ active, children }: { active?: boolean; children: React.ReactNode }) => (
     <button
       className={`rounded-lg px-3 py-1.5 text-sm ${
         active
