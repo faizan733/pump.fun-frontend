@@ -63,7 +63,7 @@ export default function Sidebar() {
       <div
         className={[
           "bg-[#0c1116] border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
-          "px-3 py-3 overflow-hidden",
+          "px-3 py-3  overflow-hidden",
           "transition-[width] duration-300 ease-in-out",
           panelRadius,
         ].join(" ")}
