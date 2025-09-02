@@ -84,7 +84,7 @@ export default function TokenCard({
         {/* Fourth row: badges + price change pill */}
         <div className="flex justify-between items-center mt-2">
           {/* badges */}
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <div className="flex items-center gap-1 text-gray-300 bg-gray-800 rounded-md px-2 py-0.5 text-[11px]">
               <Users className="w-3 h-3" /> 8
             </div>
@@ -103,7 +103,7 @@ export default function TokenCard({
           <span
             className={`${
               isPositive ? "bg-emerald-500" : "bg-red-500"
-            } text-white font-medium px-3 py-1 rounded-md text-xs shadow-md`}
+            } text-white font-medium px-3 py-1 ml-2 rounded-md text-xs shadow-md`}
           >
             {change}
           </span>

@@ -9,7 +9,7 @@ export default function CategoryColumn({ title }: CategoryColumnProps) {
   const tokens = [
     {
       logo: "/coins/coin1.jpg",
-      name: "NSA NEVER SELL AS..",
+      name: "NSA NEVER SELL AS...",
       volume: "$705",
       marketCap: "$5.7k",
       tx: "12",
@@ -18,7 +18,7 @@ export default function CategoryColumn({ title }: CategoryColumnProps) {
     },
     {
       logo: "/coins/coin2.jpg",
-      name: "COIN LEGENDS",
+      name: "NSA NEVER SELL AS...",
       volume: "$1.2k",
       marketCap: "$12.4k",
       tx: "18",
@@ -27,12 +27,30 @@ export default function CategoryColumn({ title }: CategoryColumnProps) {
     },
     {
       logo: "/coins/coin3.jpg",
-      name: "PUMP HERO",
+      name: "NSA NEVER SELL AS...",
       volume: "$800",
       marketCap: "$7.8k",
       tx: "9",
       price: "$450",
       change: "-0.02",
+    },
+    {
+      logo: "/coins/coin4.jpg",
+      name: "NSA NEVER SELL AS...",
+      volume: "$460",
+      marketCap: "$18.8k",
+      tx: "7",
+      price: "$450",
+      change: "-0.03",
+    },
+    {
+      logo: "/coins/coin1.jpg",
+      name: "NSA NEVER SELL AS...",
+      volume: "$705",
+      marketCap: "$5.7k",
+      tx: "12",
+      price: "$705",
+      change: "+0.01",
     },
   ];
 
@@ -59,8 +77,8 @@ export default function CategoryColumn({ title }: CategoryColumnProps) {
         </div>
       </div>
 
-      {/* Token List */}
-      <div className="space-y-4 overflow-y-auto max-h-[70vh] pr-1">
+      {/* Token List → no inner scroll, whole page scrolls */}
+      <div className="space-y-4">
         {tokens.map((token, i) => (
           <TokenCard key={i} {...token} />
         ))}
