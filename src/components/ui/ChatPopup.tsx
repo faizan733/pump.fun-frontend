@@ -1,11 +1,21 @@
+// src/components/ui/ChatPopup.tsx
 "use client";
 
 import { X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect } from "react";
 
-export default function ChatPopup() {
-  const [open, setOpen] = useState(true);
+interface ChatPopupProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function ChatPopup({ open, onClose }: ChatPopupProps) {
+  // lock/unlock scroll
+  useEffect(() => {
+    if (open) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "unset";
+  }, [open]);
 
   return (
     <AnimatePresence>
@@ -15,6 +25,7 @@ export default function ChatPopup() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          onClick={onClose} // close on background click
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
@@ -22,10 +33,11 @@ export default function ChatPopup() {
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="relative w-[400px] max-w-sm rounded-2xl bg-black text-white p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()} // prevent close on modal click
           >
             {/* Close Button */}
             <button
-              onClick={() => setOpen(false)}
+              onClick={onClose}
               className="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white"
             >
               <X className="h-5 w-5" />
