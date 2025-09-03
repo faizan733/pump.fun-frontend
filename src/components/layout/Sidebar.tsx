@@ -15,14 +15,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import ChatPopup from "@/components/ui/ChatPopup"; // 👈 import popup
+import ChatPopup from "@/components/ui/ChatPopup";
+import SupportPopup from "@/components/ui/SupportPopup"; // 👈 import support
 
 const NAV = [
   { label: "Home", href: "/", icon: Home },
   { label: "Advanced", href: "/advanced", icon: Layers },
   { label: "Chats", href: "/chats", icon: MessageSquare }, // special
   { label: "Profile", href: "/profile", icon: User },
-  { label: "Support", href: "/support", icon: LifeBuoy },
+  { label: "Support", href: "/support", icon: LifeBuoy }, // special
   { label: "More", href: "/more", icon: MoreHorizontal },
 ];
 
@@ -36,7 +37,8 @@ export default function Sidebar() {
   const PANEL_W = 320;
 
   const [open, setOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false); // 👈 control popup
+  const [chatOpen, setChatOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
 
   const width = open ? PANEL_W : RAIL_W;
 
@@ -44,14 +46,22 @@ export default function Sidebar() {
     document.documentElement.style.setProperty("--sidebar-w", `${width}px`);
   }, [width]);
 
-  const isActive = useCallback(
-    (href: string) => {
-      if (chatOpen && href === "/chats") return true; // 👈 chats active while popup open
-      if (chatOpen && href === "/") return false; // 👈 disable home highlight while popup
-      return href === "/" ? pathname === "/" : pathname?.startsWith(href);
-    },
-    [pathname, chatOpen]
-  );
+const isActive = useCallback(
+  (href: string) => {
+    // Support overrides all
+    if (supportOpen && href === "/support") return true;
+    if (supportOpen && href !== "/support") return false;
+
+    // Chat overrides all
+    if (chatOpen && href === "/chats") return true;
+    if (chatOpen && href !== "/chats") return false;
+
+    // Default page-based check
+    return href === "/" ? pathname === "/" : pathname?.startsWith(href);
+  },
+  [pathname, chatOpen, supportOpen]
+);
+
 
   const panelRadius = "rounded-2xl";
 
@@ -172,6 +182,64 @@ export default function Sidebar() {
                 );
               }
 
+              // special case for Support
+              if (label === "Support") {
+                return open ? (
+                  <button
+                    key={href}
+                    onClick={() => setSupportOpen(true)}
+                    className={[
+                      "flex items-center gap-3 rounded-xl px-4 py-3 w-full",
+                      active
+                        ? "bg-emerald-500 text-black"
+                        : "hover:bg-white/5 text-white/85",
+                    ].join(" ")}
+                  >
+                    <div
+                      className={[
+                        "h-10 w-10 rounded-full border flex items-center justify-center",
+                        active
+                          ? "bg-emerald-500 text-black border-emerald-400"
+                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
+                      ].join(" ")}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <span className={active ? "font-semibold" : ""}>
+                      {label}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    key={href}
+                    onClick={() => setSupportOpen(true)}
+                    title={label}
+                    className="flex flex-col items-center gap-1"
+                  >
+                    <div
+                      className={[
+                        "h-12 w-12 rounded-full border flex items-center justify-center",
+                        active
+                          ? "bg-emerald-500 text-black border-emerald-400"
+                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
+                      ].join(" ")}
+                    >
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <span
+                      className={[
+                        "text-[11px]",
+                        active
+                          ? "text-emerald-400 font-semibold"
+                          : "text-white/70",
+                      ].join(" ")}
+                    >
+                      {label}
+                    </span>
+                  </button>
+                );
+              }
+
               // normal links
               return open ? (
                 <Link
@@ -180,7 +248,7 @@ export default function Sidebar() {
                   className={[
                     "flex items-center gap-3 rounded-xl px-4 py-3",
                     active
-                      ? "bg-emerald-500 text-black"
+                      ? "bg-emerald-500 text-white"
                       : "hover:bg-white/5 text-white/85",
                   ].join(" ")}
                 >
@@ -188,7 +256,7 @@ export default function Sidebar() {
                     className={[
                       "h-10 w-10 rounded-full border flex items-center justify-center",
                       active
-                        ? "bg-emerald-500 text-black border-emerald-400"
+                        ? "bg-emerald-500 text-white border-emerald-400"
                         : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
                     ].join(" ")}
                   >
@@ -207,7 +275,7 @@ export default function Sidebar() {
                     className={[
                       "h-12 w-12 rounded-full border flex items-center justify-center",
                       active
-                        ? "bg-emerald-500 text-black border-emerald-400"
+                        ? "bg-emerald-500 text-white border-emerald-400"
                         : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
                     ].join(" ")}
                   >
@@ -224,7 +292,7 @@ export default function Sidebar() {
             {open ? (
               <Link
                 href="/create"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-semibold py-3 shadow"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 shadow"
               >
                 <Plus className="h-5 w-5" />
                 Create Coin
@@ -234,7 +302,7 @@ export default function Sidebar() {
                 <Link
                   href="/create"
                   aria-label="Create Coin"
-                  className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black flex items-center justify-center shadow"
+                  className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow"
                 >
                   <Plus className="h-6 w-6" />
                 </Link>
@@ -244,8 +312,9 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* popup mounted here */}
+      {/* popups mounted here */}
       <ChatPopup open={chatOpen} onClose={() => setChatOpen(false)} />
+      <SupportPopup open={supportOpen} onClose={() => setSupportOpen(false)} />
     </>
   );
 }
