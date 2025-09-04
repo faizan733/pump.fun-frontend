@@ -18,12 +18,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-black text-white">
-        <TopBar />
-        <div className="pt-[40px] md:flex md:gap-4 min-h-screen">
-          <Sidebar />
+        <Sidebar />
+
+        <div
+          className="min-h-screen"
+          style={{ marginLeft: "var(--sidebar-w)" }}
+        >
+          {/* TopBar now starts after sidebar */}
+          <TopBar />
+
           <main className="flex-1">{children}</main>
+
+          <Footer />
         </div>
-        <Footer />
       </body>
     </html>
   );

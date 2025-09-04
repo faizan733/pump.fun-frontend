@@ -2,319 +2,197 @@
 
 import {
   ChevronLeft,
-  ChevronRight,
   Home,
   Layers,
-  LifeBuoy,
-  MessageSquare,
-  MoreHorizontal,
+  Video,
+  MessageCircle,
+  CircleUser,
+  Headset,
+  EllipsisVertical,
   Plus,
-  User,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import ChatPopup from "@/components/ui/ChatPopup";
-import SupportPopup from "@/components/ui/SupportPopup"; // 👈 import support
+import { useEffect, useState } from "react";
 
 const NAV = [
   { label: "Home", href: "/", icon: Home },
+  { label: "Livestreams", href: "/livestreams", icon: Video },
   { label: "Advanced", href: "/advanced", icon: Layers },
-  { label: "Chats", href: "/chats", icon: MessageSquare }, // special
-  { label: "Profile", href: "/profile", icon: User },
-  { label: "Support", href: "/support", icon: LifeBuoy }, // special
-  { label: "More", href: "/more", icon: MoreHorizontal },
+  { label: "Chat", href: "/chats", icon: MessageCircle, badge: "NEW" },
+  { label: "Profile", href: "/profile", icon: CircleUser },
+  { label: "Support", href: "/support", icon: Headset },
+  { label: "More", href: "/more", icon: EllipsisVertical },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(true);
+  const [showQr, setShowQr] = useState(true);
 
-  const TOPBAR_H = 80;
-  const GAP_TOP = 8;
-  const LEFT_MARGIN = 16;
-  const RAIL_W = 80;
-  const PANEL_W = 320;
-
-  const [open, setOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
-
-  const width = open ? PANEL_W : RAIL_W;
+  const width = open ? 220 : 80;
 
   useEffect(() => {
     document.documentElement.style.setProperty("--sidebar-w", `${width}px`);
   }, [width]);
 
-const isActive = useCallback(
-  (href: string) => {
-    // Support overrides all
-    if (supportOpen && href === "/support") return true;
-    if (supportOpen && href !== "/support") return false;
-
-    // Chat overrides all
-    if (chatOpen && href === "/chats") return true;
-    if (chatOpen && href !== "/chats") return false;
-
-    // Default page-based check
-    return href === "/" ? pathname === "/" : pathname?.startsWith(href);
-  },
-  [pathname, chatOpen, supportOpen]
-);
-
-
-  const panelRadius = "rounded-2xl";
-
   return (
-    <>
-      <aside
-        className="hidden md:block sticky self-start mb-4 transition-[width] duration-300 ease-in-out"
-        style={{
-          top: TOPBAR_H + GAP_TOP,
-          marginLeft: LEFT_MARGIN,
-          width,
-        }}
-      >
-        <div
-          className={[
-            "bg-[#0c1116] border border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.35)]",
-            "px-3 py-3 overflow-hidden",
-            "transition-[width] duration-300 ease-in-out",
-            panelRadius,
-          ].join(" ")}
-        >
-          {/* header / toggle */}
-          <div
-            className={`flex items-center mb-2 ${
-              open ? "justify-between" : "justify-center"
-            }`}
-          >
-            <div className={open ? "flex" : "hidden"}>
-              <div className="h-9 px-3 flex items-center gap-2">
-                <Image
-                  src="/logos/ordi-logo.svg"
-                  alt="Logo"
-                  width={20}
-                  height={20}
-                  className="h-7 w-7"
-                />
-                <span className="text-white font-semibold">ORDI</span>
-              </div>
+    <aside
+      className="hidden md:flex fixed top-0 left-0 h-screen transition-[width] duration-300 ease-in-out z-40"
+      style={{ width }}
+    >
+      <div className="flex flex-col h-full w-full bg-[#0c1116] border-r border-white/10">
+        {/* Header */}
+        <div className="flex items-center h-14 px-3">
+          {open && (
+            <div className="flex items-center gap-2">
+              <Image
+                src="/logos/ordi-logo.svg"
+                alt="Logo"
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
+              <span className="text-white font-semibold text-base">
+                Pump.fun
+              </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
-              className="h-7 w-7 my-2 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
-            >
-              {open ? (
-                <ChevronLeft className="h-4 w-4 text-white/80" />
-              ) : (
-                <ChevronRight className="h-4 w-4 text-white/80" />
-              )}
-            </button>
-          </div>
-
-          {/* nav */}
-          <nav
-            className={
-              open ? "space-y-1 px-1" : "flex flex-col items-center gap-3"
-            }
+          )}
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="ml-auto h-8 w-8 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
+            aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
           >
-            {NAV.map(({ label, href, icon: Icon }) => {
-              const active = isActive(href);
+            <ChevronLeft
+              className={`h-4 w-4 text-white transition-transform ${
+                !open ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+        </div>
 
-              // special case for Chats
-              if (label === "Chats") {
-                return open ? (
-                  <button
-                    key={href}
-                    onClick={() => setChatOpen(true)}
-                    className={[
-                      "flex items-center gap-3 rounded-xl px-4 py-3 w-full",
-                      active
-                        ? "bg-emerald-500 text-black"
-                        : "hover:bg-white/5 text-white/85",
-                    ].join(" ")}
-                  >
-                    <div
-                      className={[
-                        "h-10 w-10 rounded-full border flex items-center justify-center",
-                        active
-                          ? "bg-emerald-500 text-black border-emerald-400"
-                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                      ].join(" ")}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span className={active ? "font-semibold" : ""}>
-                      {label}
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    key={href}
-                    onClick={() => setChatOpen(true)}
-                    title={label}
-                    className="flex flex-col items-center gap-1"
-                  >
-                    <div
-                      className={[
-                        "h-12 w-12 rounded-full border flex items-center justify-center",
-                        active
-                          ? "bg-emerald-500 text-black border-emerald-400"
-                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                      ].join(" ")}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span
-                      className={[
-                        "text-[11px]",
-                        active
-                          ? "text-emerald-400 font-semibold"
-                          : "text-white/70",
-                      ].join(" ")}
-                    >
-                      {label}
-                    </span>
-                  </button>
-                );
-              }
+        {/* Nav */}
+        <ul
+          className={
+            open
+              ? "space-y-1 mt-5 px-2" // ⬅️ more top margin + bigger gaps
+              : "flex flex-col items-center gap-4 mt-5"
+          }
+        >
+          {NAV.map(({ label, href, icon: Icon, badge }) => {
+            const active =
+              href === "/" ? pathname === "/" : pathname?.startsWith(href);
 
-              // special case for Support
-              if (label === "Support") {
-                return open ? (
-                  <button
-                    key={href}
-                    onClick={() => setSupportOpen(true)}
-                    className={[
-                      "flex items-center gap-3 rounded-xl px-4 py-3 w-full",
-                      active
-                        ? "bg-emerald-500 text-black"
-                        : "hover:bg-white/5 text-white/85",
-                    ].join(" ")}
-                  >
-                    <div
-                      className={[
-                        "h-10 w-10 rounded-full border flex items-center justify-center",
-                        active
-                          ? "bg-emerald-500 text-black border-emerald-400"
-                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                      ].join(" ")}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span className={active ? "font-semibold" : ""}>
-                      {label}
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    key={href}
-                    onClick={() => setSupportOpen(true)}
-                    title={label}
-                    className="flex flex-col items-center gap-1"
-                  >
-                    <div
-                      className={[
-                        "h-12 w-12 rounded-full border flex items-center justify-center",
-                        active
-                          ? "bg-emerald-500 text-black border-emerald-400"
-                          : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                      ].join(" ")}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <span
-                      className={[
-                        "text-[11px]",
-                        active
-                          ? "text-emerald-400 font-semibold"
-                          : "text-white/70",
-                      ].join(" ")}
-                    >
-                      {label}
-                    </span>
-                  </button>
-                );
-              }
-
-              // normal links
-              return open ? (
+            return (
+              <li key={href}>
                 <Link
-                  key={href}
                   href={href}
                   className={[
-                    "flex items-center gap-3 rounded-xl px-4 py-3",
+                    "flex items-center gap-3 rounded-lg",
+                    open
+                      ? "px-3 py-2.5"
+                      : "flex-col items-center gap-1 py-2 w-16",
                     active
-                      ? "bg-emerald-500 text-white"
+                      ? "bg-emerald-500 text-black font-semibold"
                       : "hover:bg-white/5 text-white/85",
                   ].join(" ")}
                 >
-                  <div
-                    className={[
-                      "h-10 w-10 rounded-full border flex items-center justify-center",
-                      active
-                        ? "bg-emerald-500 text-white border-emerald-400"
-                        : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                    ].join(" ")}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <span className={active ? "font-semibold" : ""}>{label}</span>
+                  <Icon className="h-6 w-6" /> {/* ⬅️ bigger icons */}
+                  {open && (
+                    <span className="flex items-center gap-2 text-sm">
+                      {label}
+                      {badge && (
+                        <span className="rounded-md bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                          {badge}
+                        </span>
+                      )}
+                    </span>
+                  )}
                 </Link>
-              ) : (
-                <Link
-                  key={href}
-                  href={href}
-                  title={label}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div
-                    className={[
-                      "h-12 w-12 rounded-full border flex items-center justify-center",
-                      active
-                        ? "bg-emerald-500 text-white border-emerald-400"
-                        : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10",
-                    ].join(" ")}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <span className="text-[11px] text-white/70">{label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+              </li>
+            );
+          })}
 
-          {/* footer CTA */}
-          <div className="pt-2 mx-2">
-            {open ? (
-              <Link
-                href="/create"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold py-3 shadow"
-              >
-                <Plus className="h-5 w-5" />
-                Create Coin
-              </Link>
-            ) : (
-              <div className="flex items-center justify-center">
+          {/* Create coin */}
+          <li>
+            {(() => {
+              const active = pathname?.startsWith("/create");
+              return (
                 <Link
                   href="/create"
-                  aria-label="Create Coin"
-                  className="h-12 w-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow"
+                  title="Create coin"
+                  className={[
+                    "flex items-center gap-3 rounded-lg bg-emerald-400 text-black ",
+                    open
+                      ? "px-3 py-2.5 justify-center"
+                      : "flex flex-col items-center gap-1 py-2 w-16",
+                    active
+                      ? "bg-emerald-500 text-black font-semibold"
+                      : "hover:bg-white/5 ",
+                  ].join(" ")}
                 >
-                  <Plus className="h-6 w-6" />
+                  {open ? (
+                    <span className="font-medium text-sm text-center w-full">
+                      Create coin
+                    </span>
+                  ) : (
+                    <Plus className="h-6 w-6" /> // ⬅️ bigger icon here too
+                  )}
                 </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </aside>
+              );
+            })()}
+          </li>
+        </ul>
 
-      {/* popups mounted here */}
-      <ChatPopup open={chatOpen} onClose={() => setChatOpen(false)} />
-      <SupportPopup open={supportOpen} onClose={() => setSupportOpen(false)} />
-    </>
+        {/* Smaller QR card at bottom */}
+        {showQr && (
+          <div className="mt-auto mb-3 px-2">
+            <div className="relative rounded-lg border border-emerald-500 bg-white/[0.02] p-2 py-5">
+              {open ? (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Close"
+                    onClick={() => setShowQr(false)}
+                    className="absolute right-2 inline-flex h-5 w-5 items-center justify-center rounded-md border border-white/10 bg-white/5 hover:bg-white/10"
+                  >
+                    <X className="h-3 w-3 text-white/80" />
+                  </button>
+                  <p className="text-center text-sm font-semibold text-white">
+                    Pump app
+                  </p>
+                  <div className="mt-2 rounded-md border-white/15 p-2">
+                    <Image
+                      src="/qr-placeholder.png"
+                      alt="QR code"
+                      width={100}
+                      height={100}
+                      className="mx-auto rounded"
+                    />
+                    <p className="mt-2 text-center text-xs text-white/60">
+                      Scan to download
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-1 py-1">
+                  <Image
+                    src="/qr-placeholder.png"
+                    alt="QR"
+                    width={40}
+                    height={40}
+                    className="rounded"
+                  />
+                  <span className="text-[10px] text-white/60">App</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </aside>
   );
 }
