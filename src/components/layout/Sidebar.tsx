@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ChevronLeft,
   Home,
   Layers,
   Video,
@@ -11,6 +10,8 @@ import {
   EllipsisVertical,
   Plus,
   X,
+  PanelRightOpen,
+  PanelRightClose,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,7 +33,7 @@ export default function Sidebar() {
   const [open, setOpen] = useState(true);
   const [showQr, setShowQr] = useState(true);
 
-  const width = open ? 220 : 80;
+  const width = open ? 215 : 80;
 
   useEffect(() => {
     document.documentElement.style.setProperty("--sidebar-w", `${width}px`);
@@ -45,32 +46,32 @@ export default function Sidebar() {
     >
       <div className="flex flex-col h-full w-full bg-[#15161b] border-r border-white/10">
         {/* Header */}
-        <div className="flex items-center h-14 px-3">
+        <div className="flex items-center h-14 pt-5 px-3">
           {open && (
             <div className="flex items-center gap-2">
               <Image
-                src="/logos/ordi-logo.svg"
+                src="/logos/logo.png"
                 alt="Logo"
-                width={28}
-                height={28}
-                className="h-7 w-7"
+                width={40}
+                height={40}
+                className="h-9 w-9"
               />
-              <span className="text-white font-semibold text-base">
-                Pump.fun
-              </span>
+              <span className="text-white font-bold text-base">Pump.fun</span>
             </div>
           )}
+
+          {/* Toggle - swapped icons, no border/container */}
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="ml-auto h-8 w-8 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center"
             aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
+            className="ml-auto flex items-center justify-center text-white hover:text-[#87ef9b] transition-colors"
           >
-            <ChevronLeft
-              className={`h-4 w-4 text-white transition-transform ${
-                !open ? "rotate-180" : ""
-              }`}
-            />
+            {open ? (
+              <PanelRightOpen className="h-5 w-5" />
+            ) : (
+              <PanelRightClose className="h-5 w-5" />
+            )}
           </button>
         </div>
 
@@ -78,29 +79,30 @@ export default function Sidebar() {
         <ul
           className={
             open
-              ? "space-y-1 mt-5 px-2" // ⬅️ more top margin + bigger gaps
+              ? "space-y-1 mt-5 px-2"
               : "flex flex-col items-center gap-4 mt-5"
           }
         >
           {NAV.map(({ label, href, icon: Icon, badge }) => {
             const active =
               href === "/" ? pathname === "/" : pathname?.startsWith(href);
+            const activeClass = active
+              ? "text-[#87ef9b] font-semibold"
+              : "text-white/85 hover:text-[#87ef9b]";
 
             return (
               <li key={href}>
                 <Link
                   href={href}
                   className={[
-                    "flex items-center gap-3 rounded-lg",
+                    "flex items-center gap-3.5 rounded-lg transition-colors",
                     open
                       ? "px-3 py-2.5"
                       : "flex-col items-center gap-1 py-2 w-16",
-                    active
-                      ? "bg-emerald-500 text-black font-semibold"
-                      : "hover:bg-white/5 text-white/85",
+                    activeClass,
                   ].join(" ")}
                 >
-                  <Icon className="h-6 w-6" /> {/* ⬅️ bigger icons */}
+                  <Icon className="h-6 w-6" />
                   {open && (
                     <span className="flex items-center gap-2 text-sm">
                       {label}
@@ -120,26 +122,24 @@ export default function Sidebar() {
           <li>
             {(() => {
               const active = pathname?.startsWith("/create");
+
               return (
                 <Link
                   href="/create"
                   title="Create coin"
                   className={[
-                    "flex items-center gap-3 rounded-lg bg-emerald-400 text-black ",
+                    "bg-[#86efac] flex items-center gap-3 rounded-lg transition-colors",
                     open
                       ? "px-3 py-2.5 justify-center"
                       : "flex flex-col items-center gap-1 py-2 w-16",
-                    active
-                      ? "bg-emerald-500 text-black font-semibold"
-                      : "hover:bg-white/5 ",
                   ].join(" ")}
                 >
                   {open ? (
-                    <span className="font-medium text-sm text-center w-full">
+                    <span className="text-black font-medium text-sm text-center w-full">
                       Create coin
                     </span>
                   ) : (
-                    <Plus className="h-6 w-6" /> // ⬅️ bigger icon here too
+                    <Plus className="h-6 w-6 text-black" />
                   )}
                 </Link>
               );
@@ -161,10 +161,12 @@ export default function Sidebar() {
                   >
                     <X className="h-3 w-3 text-white/80" />
                   </button>
+
                   <p className="text-center text-sm font-semibold text-white">
                     Pump app
                   </p>
-                  <div className="mt-2 rounded-md border-white/15 p-2">
+
+                  <div className="mt-2 rounded-md p-2">
                     <Image
                       src="/qr-placeholder.png"
                       alt="QR code"
@@ -175,6 +177,14 @@ export default function Sidebar() {
                     <p className="mt-2 text-center text-xs text-white/60">
                       Scan to download
                     </p>
+
+                    {/* Learn more button */}
+                    <Link
+                      href="/learn-more"
+                      className="mt-3 block w-full text-center rounded-md bg-emerald-600 px-3 py-2 text-xs font-semibold text-black hover:bg-emerald-500"
+                    >
+                      Learn more
+                    </Link>
                   </div>
                 </>
               ) : (

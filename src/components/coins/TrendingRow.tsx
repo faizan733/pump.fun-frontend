@@ -24,23 +24,9 @@ export default function TrendingRow() {
     el.scrollBy({ left: dx, behavior: "smooth" });
   };
 
-  // ensure active card is visible
-  useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const child = el.children[active] as HTMLElement | undefined;
-    if (child) {
-      const childLeft = child.offsetLeft;
-      const childRight = childLeft + child.clientWidth;
-      const viewLeft = el.scrollLeft;
-      const viewRight = viewLeft + el.clientWidth;
-      if (childLeft < viewLeft || childRight > viewRight) {
-        el.scrollTo({ left: Math.max(childLeft - 12, 0), behavior: "smooth" });
-      }
-    }
-  }, [active]);
+  // ⛔️ Removed auto-scroll into view logic
 
-  // keyboard navigation
+  // keyboard navigation (still updates active index, but no auto-scroll)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
@@ -83,31 +69,30 @@ export default function TrendingRow() {
         className="overflow-x-auto pr-2 no-scrollbar"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div className="min-w-max flex gap-3 items-start py-0">
+        <div className="min-w-max flex gap-4 items-start py-0">
           {trendingCoins.map((coin, i) => {
             const isActive = i === active;
             return (
               <Link
-                key={`${coin.id}-${i}`} // 👈 use index in key to avoid duplicates
+                key={`${coin.id}-${i}`}
                 href={`/coins/${coin.id}`}
                 onMouseEnter={() => setActive(i)}
                 className={[
-                  "shrink-0 group inline-flex items-start gap-3 rounded-lg p-3 transition-shadow",
-                  "bg-[#111214] border border-white/6",
-                  "min-w-[240px] md:min-w-[260px]",
-                  isActive
-                    ? "bg-gray-950"
-                    : "hover:shadow-[0_6px_18px_rgba(0,0,0,0.45)]",
+                  "shrink-0 group inline-flex items-start gap-3 rounded-xl p-2.5",
+                  "min-w-[260px] md:min-w-[280px] border border-white/6",
+                  // ✅ smooth transition for background color
+                  "transition-colors duration-300 ease-in-out",
+                  isActive ? "bg-[#181a1f]" : "bg-[#1c2530] hover:bg-[#181a1f]",
                 ].join(" ")}
                 aria-label={`${coin.name} — Market Cap ${coin.mcap}`}
               >
                 {/* left image */}
-                <div className="relative h-14 w-14 md:h-[70px] md:w-[70px] shrink-0 overflow-hidden rounded-sm bg-white/5">
+                <div className="relative h-14 w-14 md:h-[75px] md:w-[75px] shrink-0 overflow-hidden rounded-sm bg-white/5">
                   <Image
                     src={coin.image}
                     alt={coin.name}
                     fill
-                    sizes="64px"
+                    sizes="70px"
                     className="object-cover"
                   />
                 </div>
@@ -119,16 +104,17 @@ export default function TrendingRow() {
                       <div className="text-sm font-semibold leading-5 text-white">
                         {coin.name}
                       </div>
+                      <div className="text-xs text-white font-semibold">
+                        ({coin.symbol})
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <span className="text-sm">(Coin name)</span>
-                  </div>
-                  <div className="mt-1 font-medium text-[13px]">
-                    <div className="text-emerald-400">
+
+                  <div className="mt-0.5 font-medium text-[13px]">
+                    <div className="text-[#83efaa]">
                       <span>market cap:</span> <span>{coin.mcap}</span>
                     </div>
-                    <div className="text-white/70  font-thin">
+                    <div className="text-white/70 font-thin">
                       <span>replies:</span> <span>{coin.replies}</span>
                     </div>
                   </div>

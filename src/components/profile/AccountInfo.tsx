@@ -5,7 +5,7 @@ import { Copy, ExternalLink } from "lucide-react";
 
 export default function AccountInfo() {
   return (
-    <div className="md:col-span-2 bg-[#2E2E31] border border-white/10 rounded-2xl w-full max-w-3xl mx-auto px-8 py-6 flex flex-col gap-4">
+    <div className="md:col-span-2 w-full max-w-3xl mx-auto py-6 flex flex-col gap-4">
       {/* Top row: Avatar + Info + Button */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-6">

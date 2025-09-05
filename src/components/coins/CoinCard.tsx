@@ -2,103 +2,145 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowDownRight, Clock, MessageCircle, User2 } from "lucide-react";
 
 type Coin = {
   id: string;
   name: string;
   symbol: string;
   image: string;
+  creator?: string;
+  creatorIcon?: string;
   marketCap: string;
-  replies: number;
   changePct: number;
-  age: string;
+  age?: string;
+  description?: string;
 };
 
+function formatAge(age?: string) {
+  if (!age) return "–";
+
+  const a = age.trim().toLowerCase();
+
+  const match = a.match(
+    /^(\d+)\s*(m|min|mins|h|hr|hrs|d|day|days|w|wk|wks|mo|mos|month|months|y|yr|yrs|year|years)$/
+  );
+  if (match) {
+    const n = Number(match[1]);
+    const unit = match[2];
+
+    if (["m", "min", "mins"].includes(unit)) {
+      return `${n} min ago`;
+    }
+    if (["h", "hr", "hrs"].includes(unit)) {
+      return `${n} hr${n > 1 ? "s" : ""} ago`;
+    }
+    if (["d", "day", "days"].includes(unit)) {
+      return `${n} day${n > 1 ? "s" : ""} ago`;
+    }
+    if (["w", "wk", "wks"].includes(unit)) {
+      return `${n} wk${n > 1 ? "s" : ""} ago`;
+    }
+    if (["mo", "mos", "month", "months"].includes(unit)) {
+      return `${n} mo${n > 1 ? "s" : ""} ago`;
+    }
+    if (["y", "yr", "yrs", "year", "years"].includes(unit)) {
+      return `${n} yr${n > 1 ? "s" : ""} ago`;
+    }
+  }
+
+  const last = a.slice(-1);
+  const num = Number(a.slice(0, -1));
+  if (!Number.isNaN(num)) {
+    if (last === "m") return `${num} min ago`;
+    if (last === "h") return `${num} hr${num > 1 ? "s" : ""} ago`;
+    if (last === "d") return `${num} day${num > 1 ? "s" : ""} ago`;
+    if (last === "w") return `${num} wk${num > 1 ? "s" : ""} ago`;
+    if (last === "y") return `${num} yr${num > 1 ? "s" : ""} ago`;
+  }
+
+  return a.includes("ago") ? a : `${a} ago`;
+}
+
 export default function CoinCard({ coin }: { coin: Coin }) {
+  const up = coin.changePct >= 0;
+  const pct = Math.abs(coin.changePct).toFixed(2);
+  const progPct = Math.max(6, Math.min(100, Math.abs(coin.changePct)));
+
   return (
-    <Link href={`/coins/${coin.id}`} className="block">
-      <article className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-sm hover:border-neutral-700 hover:bg-neutral-900 transition-colors">
-        {/* Media */}
-        <div className="relative h-40 w-full">
+    <Link
+      href={`/coins/${coin.id}`}
+      className="block"
+      aria-label={`${coin.name} — MC ${coin.marketCap}`}
+    >
+      <article className="flex items-start gap-4 rounded-lg p-2">
+        <div
+          className="relative flex-shrink-0 rounded-lg overflow-hidden"
+          style={{ width: 160, height: 160 }}
+        >
           <Image
             src={coin.image}
             alt={coin.name}
             fill
             className="object-cover"
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            sizes="160px"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
-          <div className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-1 text-[10px] font-medium text-white backdrop-blur">
-            {coin.symbol}
-          </div>
         </div>
 
-        {/* Body */}
-        <div className="space-y-3 p-3 sm:p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h3 className="line-clamp-1 text-sm font-semibold text-white">
-                {coin.name}
-              </h3>
-              <div className="mt-1 flex items-center gap-2 text-xs text-neutral-400">
-                <User2 className="h-3.5 w-3.5" />
-                <span>@CxcsD</span>
-                <span className="opacity-60">•</span>
-                <Clock className="h-3.5 w-3.5" />
-                <span>{coin.age}</span>
+        <div className="flex flex-col justify-between flex-1 min-w-0">
+          <div className="flex flex-col gap-1">
+            <div className="text-base font-semibold text-white leading-tight line-clamp-1">
+              {coin.name}
+            </div>
+            <div className="text-xs font-medium text-white/70 leading-tight">
+              {coin.symbol}
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-white/60">
+              <div className="relative h-6 w-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+                <Image
+                  src={coin.creatorIcon ?? coin.image}
+                  alt={coin.creator ?? "creator"}
+                  fill
+                  className="object-cover"
+                  sizes="24px"
+                />
+              </div>
+              <span className="text-xs text-white/80 font-medium truncate">
+                {coin.creator ?? "unknown"}
+              </span>
+
+              <div className="flex items-center gap-1 text-xs text-white/60">
+                <span>{formatAge(coin.age)}</span>
               </div>
             </div>
-            <span
-              className={[
-                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs",
-                coin.changePct < 0
-                  ? "bg-rose-500/10 text-rose-400"
-                  : "bg-emerald-500/10 text-emerald-400",
-              ].join(" ")}
-            >
-              <ArrowDownRight className="h-3.5 w-3.5 rotate-0" />
-              {Math.abs(coin.changePct).toFixed(2)}%
-            </span>
           </div>
 
-          <p className="line-clamp-2 text-xs text-neutral-300/90">
-            Anime companion coin for the Grok enjoyers.
-          </p>
+          <div className="flex items-center font-bold gap-1 mt-1.5">
+            <div className="text-xs text-white/60">MC</div>
+            <div className="text-xs">{coin.marketCap}</div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-neutral-400">MC</div>
+            <div className="flex-1 min-w-0">
+              <div className="h-2 w-full rounded-full bg-neutral-800/60 overflow-hidden ml-1.5">
+                <div
+                  className={`h-2 rounded-full ${
+                    up ? "bg-emerald-400" : "bg-rose-400"
+                  }`}
+                  style={{ width: `${progPct}%` }}
+                />
+              </div>
+            </div>
+
             <div
-              className={`text-sm font-semibold ${
-                coin.changePct < 0 ? "text-rose-400" : "text-emerald-400"
+              className={`ml-3 text-xs font-bold ${
+                up ? "text-emerald-400" : "text-rose-400"
               }`}
             >
-              {coin.marketCap}
+              {up ? "↑" : "↓"} {pct}%
             </div>
           </div>
 
-          <div className="h-2 w-full rounded-full bg-neutral-800/70">
-            <div className="h-2 w-2/3 rounded-full bg-green-500" />
-          </div>
-
-          <div className="mt-1 flex items-end justify-between gap-2">
-            <div className="flex-1">
-              <div className="h-14 w-full">
-                <svg viewBox="0 0 100 40" className="h-full w-full">
-                  <polyline
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    points="0,30 10,26 20,28 30,24 40,27 50,25 60,22 70,24 80,27 90,29 100,26"
-                    className="text-neutral-300"
-                  />
-                </svg>
-              </div>
-            </div>
-            <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-800 px-2.5 py-1.5 text-xs text-neutral-200">
-              <MessageCircle className="h-4 w-4" />
-              Details
-            </div>
+          <div className="text-xs text-neutral-300 line-clamp-2 mt-1">
+            {coin.description ?? "No description available for this token."}
           </div>
         </div>
       </article>

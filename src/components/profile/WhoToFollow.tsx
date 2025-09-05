@@ -6,7 +6,7 @@ const users = ["ACT1", "cryptonody", "improv", "ansems", "caitlyn"];
 
 export default function WhoToFollow() {
   return (
-    <div className="bg-[#2E2E31] border border-white/10 rounded-2xl p-6">
+    <div className="p-6">
       <h3 className="text-white font-semibold mb-4">Who to follow</h3>
       <div className="space-y-3">
         {users.map((user, i) => (

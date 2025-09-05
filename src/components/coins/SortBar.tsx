@@ -18,8 +18,8 @@ function Toggle({
       }`}
     >
       <span
-        className={`block h-4 w-4 rounded-full bg-white transition ${
-          checked ? "translate-x-4" : ""
+        className={`block h-4 w-4 rounded-full bg-white transition-transform transform ${
+          checked ? "translate-x-4" : "translate-x-0"
         }`}
       />
     </button>
@@ -27,14 +27,16 @@ function Toggle({
 }
 
 const TAGS = [
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
-  "🔥🔥 YZY Hpye 🐒",
+  "BLYAT Brigade 💊",
+  "🔥Card Duetlists🃏",
+  "Cat Kingdom 😺",
+  "Doggo Domination 🐕",
+  "Money Madness 💸",
+  "Meme Royals 👑",
+  "🔥Pump Hype 🚀",
+  "Streaming Universe 📺",
+  "SKINtastic 🎨",
+  "🔥Solona Invasion🟩",
 ];
 
 export default function SortBar() {
@@ -43,9 +45,9 @@ export default function SortBar() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex items-center gap-3">
         {/* Sort pill */}
-        <button className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white shadow cursor-pointer">
+        <button className="inline-flex items-center gap-1.5 rounded-lg bg-[#83efaa] px-4 py-2 text-sm  text-black shadow cursor-pointer">
           Sort: Feature 🔥
           <ChevronDown className="h-4 w-4" />
         </button>
@@ -66,16 +68,22 @@ export default function SortBar() {
           </div>
         </div>
 
-        {/* Tags area to the right */}
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          {TAGS.map((t, i) => (
-            <button
-              key={i}
-              className="rounded-xl bg-white/10 border cursor-pointer border-white/15 px-2 py-2 text-sm text-white hover:bg-white/15 shadow-sm"
-            >
-              {t}
-            </button>
-          ))}
+        {/* Tags area: takes remaining space and scrolls horizontally */}
+        <div className="ml-4 flex-1 min-w-0">
+          <div
+            className="flex gap-3 items-center overflow-x-auto no-scrollbar whitespace-nowrap px-1 py-0.5"
+            role="list"
+          >
+            {TAGS.map((t, i) => (
+              <button
+                key={i}
+                role="listitem"
+                className="inline-block rounded-sm bg-[#1f2937] border border-[#1f2937] px-3 py-2 text-sm text-white hover:bg-[#374151] shadow-sm"
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
