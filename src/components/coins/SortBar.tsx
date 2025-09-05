@@ -32,6 +32,9 @@ const TAGS = [
   "🔥🔥 YZY Hpye 🐒",
   "🔥🔥 YZY Hpye 🐒",
   "🔥🔥 YZY Hpye 🐒",
+  "🔥🔥 YZY Hpye 🐒",
+  "🔥🔥 YZY Hpye 🐒",
+  "🔥🔥 YZY Hpye 🐒",
 ];
 
 export default function SortBar() {

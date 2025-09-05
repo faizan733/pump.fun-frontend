@@ -43,7 +43,7 @@ export default function Sidebar() {
       className="hidden md:flex fixed top-0 left-0 h-screen transition-[width] duration-300 ease-in-out z-40"
       style={{ width }}
     >
-      <div className="flex flex-col h-full w-full bg-[#0c1116] border-r border-white/10">
+      <div className="flex flex-col h-full w-full bg-[#15161b] border-r border-white/10">
         {/* Header */}
         <div className="flex items-center h-14 px-3">
           {open && (

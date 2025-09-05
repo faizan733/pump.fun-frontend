@@ -18,7 +18,7 @@ const coins = Array.from({ length: 13 }, (_, i) => ({
 export default function PumpBoardPage() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 pb-6 space-y-8">
-      <div className="sticky top-20 z-40 bg-black/60 backdrop-blur supports-[backdrop-filter]:bg-black/40">
+      <div className="sticky top-20 z-40 bg-[#15161b] backdrop-blur supports-[backdrop-filter]:bg-black/40">
         <CoinSearch />
       </div>
 

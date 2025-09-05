@@ -1,85 +1,136 @@
 // components/coins/TrendingRow.tsx
 "use client";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { coins } from "@/lib/coins"; // 👈 shared data
-
-const items = Array.from({ length: 6 });
+import { coins } from "@/lib/coins"; // shared data
 
 export default function TrendingRow() {
-  const ref = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [active, setActive] = useState(0);
 
+  // ✅ Always create 6 cards, cycle through coins if fewer than 6
+  const trendingCoins = Array.from({ length: 6 }).map(
+    (_, idx) => coins[idx % coins.length]
+  );
+
+  // scroll by ~60% of visible width
   const scroll = (dir: "left" | "right") => {
-    const el = ref.current;
+    const el = scrollerRef.current;
     if (!el) return;
-    const dx = dir === "left" ? -el.clientWidth : el.clientWidth;
+    const dx = Math.round(el.clientWidth * 0.6) * (dir === "left" ? -1 : 1);
     el.scrollBy({ left: dx, behavior: "smooth" });
   };
 
+  // ensure active card is visible
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const child = el.children[active] as HTMLElement | undefined;
+    if (child) {
+      const childLeft = child.offsetLeft;
+      const childRight = childLeft + child.clientWidth;
+      const viewLeft = el.scrollLeft;
+      const viewRight = viewLeft + el.clientWidth;
+      if (childLeft < viewLeft || childRight > viewRight) {
+        el.scrollTo({ left: Math.max(childLeft - 12, 0), behavior: "smooth" });
+      }
+    }
+  }, [active]);
+
+  // keyboard navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        setActive((s) => Math.min(s + 1, trendingCoins.length - 1));
+      } else if (e.key === "ArrowLeft") {
+        setActive((s) => Math.max(s - 1, 0));
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [trendingCoins.length]);
+
   return (
-    <section className="space-y-4">
+    <section className="space-y-2">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-medium">Now Trending</h2>
-        <div className="flex items-center gap-2">
+        <h2 className="text-base font-medium">Now Trending</h2>
+
+        <div className="flex items-center gap-3">
           <button
             onClick={() => scroll("left")}
             aria-label="Scroll left"
-            className="h-8 w-8 rounded-full bg-white/10 border border-white/15 hover:bg-white/15 flex items-center justify-center"
+            className="h-8 w-8 rounded-full bg-white/6 border border-white/10 hover:bg-white/8 flex items-center justify-center"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
+
           <button
             onClick={() => scroll("right")}
             aria-label="Scroll right"
-            className="h-8 w-8 rounded-full bg-white/10 border border-white/15 hover:bg-white/15 flex items-center justify-center"
+            className="h-8 w-8 rounded-full bg-white/6 border border-white/10 hover:bg-white/8 flex items-center justify-center"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
       </div>
 
+      {/* scroller */}
       <div
-        ref={ref}
-        className="overflow-x-auto pr-2 [scrollbar-width:none] [-ms-overflow-style:none]"
+        ref={scrollerRef}
+        className="overflow-x-auto pr-2 no-scrollbar"
+        style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div className="min-w-max flex gap-6">
-          {items.map((_, i) => {
-            const coin = coins[i % coins.length]; // cycle 1..4
+        <div className="min-w-max flex gap-3 items-start py-0">
+          {trendingCoins.map((coin, i) => {
+            const isActive = i === active;
             return (
               <Link
-                key={i}
+                key={`${coin.id}-${i}`} // 👈 use index in key to avoid duplicates
                 href={`/coins/${coin.id}`}
-                className="shrink-0 group inline-flex items-start gap-5 rounded-lg border border-black bg-[#1c1c1e] p-3 transition-colors hover:border-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                onMouseEnter={() => setActive(i)}
+                className={[
+                  "shrink-0 group inline-flex items-start gap-3 rounded-lg p-3 transition-shadow",
+                  "bg-[#111214] border border-white/6",
+                  "min-w-[240px] md:min-w-[260px]",
+                  isActive
+                    ? "bg-gray-950"
+                    : "hover:shadow-[0_6px_18px_rgba(0,0,0,0.45)]",
+                ].join(" ")}
+                aria-label={`${coin.name} — Market Cap ${coin.mcap}`}
               >
-                <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10">
+                {/* left image */}
+                <div className="relative h-14 w-14 md:h-[70px] md:w-[70px] shrink-0 overflow-hidden rounded-sm bg-white/5">
                   <Image
                     src={coin.image}
                     alt={coin.name}
                     fill
-                    sizes="96px"
+                    sizes="64px"
                     className="object-cover"
                   />
                 </div>
-                <div className="flex flex-col justify-center mr-1.5">
-                  <div className="text-[15px] font-semibold leading-5">
-                    {coin.name}
+
+                {/* right content */}
+                <div className="flex flex-col justify-center pr-1">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold leading-5 text-white">
+                        {coin.name}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-1">
-                    <span className="inline-flex items-center rounded-sm bg-emerald-200 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                      {coin.symbol}
-                    </span>
+                  <div>
+                    <span className="text-sm">(Coin name)</span>
                   </div>
-                  <div className="mt-1.5 text-[13px] text-white/70">
-                    <span className="opacity-80">Market Cap :</span>{" "}
-                    <span className="font-medium text-emerald-400">
-                      {coin.mcap}
-                    </span>
-                  </div>
-                  <div className="text-[13px] text-white/80">
-                    <span className="opacity-80">Replies :</span>{" "}
-                    <span className="font-semibold">{coin.replies}</span>
+                  <div className="mt-1 font-medium text-[13px]">
+                    <div className="text-emerald-400">
+                      <span>market cap:</span> <span>{coin.mcap}</span>
+                    </div>
+                    <div className="text-white/70  font-thin">
+                      <span>replies:</span> <span>{coin.replies}</span>
+                    </div>
                   </div>
                 </div>
               </Link>

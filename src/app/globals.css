@@ -150,3 +150,71 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ----------------------------------------
+   Utilities for TrendingRow & scrollbar
+   ---------------------------------------- */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Slightly darker card border & smooth transition */
+.trending-card {
+  background: var(--card);
+  /* uses your theme var */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: box-shadow .18s ease, transform .18s ease, border-color .12s ease;
+}
+
+/* Hover & active (applies to the Link card) */
+.trending-card:hover {
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.6);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+/* Active (used by class when index is active) */
+.trending-card-active {
+  box-shadow: 0 14px 36px rgba(2, 6, 23, 0.65);
+  border-color: rgba(16, 185, 129, 0.26);
+  /* emerald ring color */
+  outline: none;
+}
+
+/* Chevron controls that float vertically centered at edges of the row */
+.trending-controls {
+  position: relative;
+  /* keep inside container */
+}
+
+.trending-controls .chev-btn {
+  position: relative;
+}
+
+/* If you want the chevrons to overlap the row edges:
+.trending-controls .chev-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.trending-controls .chev-btn.left { left: -18px; }
+.trending-controls .chev-btn.right { right: -18px; }
+*/
+
+/* Utility to align promo banner with page content instead of full width */
+.banner-inner {
+  max-width: 1370px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Small helper: make the search + buttons align visually with content gap */
+.content-offset {
+  padding-left: calc(var(--sidebar-w) + 1rem);
+  /* if you prefer offsetting content manually */
+}
